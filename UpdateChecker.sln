@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31729.503
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdateChecker", "UpdateChecker.csproj", "{A6EFCE07-C388-41AE-BEFE-54AAA4EAFC17}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A6EFCE07-C388-41AE-BEFE-54AAA4EAFC17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6EFCE07-C388-41AE-BEFE-54AAA4EAFC17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6EFCE07-C388-41AE-BEFE-54AAA4EAFC17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6EFCE07-C388-41AE-BEFE-54AAA4EAFC17}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D984062F-4F8C-4DF6-BBF7-51E7887FE6FC}
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = AntiCombatLog\AntiCombatLog.csproj
+	EndGlobalSection
+EndGlobal
