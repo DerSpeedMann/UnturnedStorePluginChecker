@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using SpeedMann.UpdateChecker.Models;
+using SpeedMann.UpdateChecker.Models.UStore;
 using System;
 using System.IO;
 using System.Net;
@@ -11,105 +12,91 @@ namespace SpeedMann.UpdateChecker
 {
 	public class UpdateChecker
 	{
-        private const string ApiUrl = "https://unturnedstore.com/api/products/";
+        public delegate void UpdateCheckCompletion(bool success, string newestVersion);
+
         private const string StoreUrl = "https://unturnedstore.com/products/";
 
-        private static bool Initialized = false;
-		public static string Version = "";
-
+        private UpdateCheckCompletion OnChecKCompletion;
         private string currentPluginVersion = "";
         private string pluginName = "";
         private string branchName = "";
-        private string productId = "";
+        private uint productId;
         private string storeVersion = "";
         private bool requiresUpdate = false;
         private bool loaded = false;
 
-        public UpdateChecker(string currentPluginVersion, string pluginName, string storeId, string branch = "master", bool startCheck = true)
+        public UpdateChecker(string currentPluginVersion, string pluginName, uint productId, string branch = "master")
 		{
-            if (Initialized)
-            {
-				Version = readFileVersion();
-				Initialized = true;
-			}
             this.pluginName = pluginName;
             this.currentPluginVersion = currentPluginVersion;
-            productId = storeId;
+            this.productId = productId;
             branchName = branch;
-            
-            if(startCheck) _ = tryCheckPluginVersion();
         }
 
-        public async Task<bool> tryCheckPluginVersion()
+        public void loadAndCheckPluginVersion(UpdateCheckCompletion calledMethod)
         {
+            OnChecKCompletion = calledMethod;
             loaded = false;
             requiresUpdate = false;
 
-            if (!await getVersionAsync())
+            PluginInfoLoader.loadPluginInfo(checkVersion, productId);
+        }
+        public bool tryCheckPluginVersion()
+        {
+            loaded = false;
+            requiresUpdate = false;
+            if (PluginInfoLoader.tryGetPluginInfo(productId, out Product pluginInfo))
             {
-                Logger.LogError($"Could not check newest plugin version for {pluginName}!");
+                checkVersion(true, pluginInfo);
+                return true;
+            }
+            return false;
+        }
+        private void checkVersion(bool success, Product pluginInfo)
+        {
+            if (!success)
+            {
+                OnChecKCompletion.Invoke(false, "");
+                return;
+            }
+            OnChecKCompletion.Invoke(checkVerionInner(pluginInfo, out string newestVersion), newestVersion);
+        }
+        private bool checkVerionInner(Product pluginInfo, out string newestVersion)
+        {
+            newestVersion = "";
+            foreach (Branch b in pluginInfo.branches)
+            {
+                if (b.name == branchName)
+                {
+                    for (int y = b.versions.Count - 1; y >= 0; y--)
+                    {
+                        if (b.versions[y].isEnabled)
+                        {
+                            storeVersion = b.versions[y].name;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+            if (storeVersion == "")
+            {
+                Logger.LogError($"newest store version of {pluginName} {branchName} was not found");
                 return false;
             }
 
-            requiresUpdate = checkVersion(currentPluginVersion, storeVersion, out string newestVersion);
+            requiresUpdate = checkVersionNumbers(currentPluginVersion, storeVersion, out newestVersion);
             loaded = true;
 
             if (requiresUpdate)
             {
                 Logger.LogWarning($"{pluginName} {newestVersion} is available, update now: {StoreUrl + productId}");
+                return false;
             }
-            else
-            {
-                Logger.Log($"{pluginName} {currentPluginVersion} is up to date");
-            }
+            Logger.Log($"{pluginName} {currentPluginVersion} is up to date");
             return true;
         }
-        public bool updateRequired(out string foundVersion)
-        {
-            return isStoreVersionLoaded(out foundVersion) && requiresUpdate;
-        }
-        public bool isStoreVersionLoaded(out string foundVersion)
-        {
-            foundVersion = storeVersion;
-            return loaded;
-        }
-        private async Task<bool> getVersionAsync()
-        {
-            WebRequest wr = WebRequest.Create(ApiUrl + productId);
-            wr.Method = "GET";
-
-            try
-            {
-                WebResponse response = await wr.GetResponseAsync();
-                Stream dataStream = response.GetResponseStream();
-                JsonTextReader reader = new JsonTextReader(new StreamReader(dataStream));
-                var serializer = new JsonSerializer();
-
-                Product deserializedProduct = serializer.Deserialize<Product>(reader);
-
-                foreach (Branch b in deserializedProduct.branches)
-                {
-                    if (b.name == branchName)
-                    {
-                        for (int y = b.versions.Count - 1; y >= 0; y--)
-                        {
-                            if (b.versions[y].isEnabled)
-                            {
-                                storeVersion = b.versions[y].name;
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Logger.LogException(e, "Exeption checking plugin version!");
-            }
-            return false;
-        }
-
-        private bool checkVersion(string currentVersion, string foundVersion, out string newestVersion)
+        private bool checkVersionNumbers(string currentVersion, string foundVersion, out string newestVersion)
         {
 
             string[] currentVersionSplit = currentVersion.Split('.');
@@ -137,11 +124,15 @@ namespace SpeedMann.UpdateChecker
             newestVersion = currentVersion;
             return false;
         }
-        private static string readFileVersion()
+        public bool updateRequired(out string foundVersion)
         {
-            System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            System.Diagnostics.FileVersionInfo fvi = System.Diagnostics.FileVersionInfo.GetVersionInfo(assembly.Location);
-            return fvi.FileVersion;
+            return isStoreVersionLoaded(out foundVersion) && requiresUpdate;
         }
+        public bool isStoreVersionLoaded(out string foundVersion)
+        {
+            foundVersion = storeVersion;
+            return loaded;
+        }
+        
     }
 }

@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpeedMann.UpdateChecker.Models
+namespace SpeedMann.UpdateChecker.Models.UStore
 {
     public class Product
     {
+        public uint id;
         public List<Branch> branches = new List<Branch>();
+        public List<WorkshopItem> workshopItems;
     }
 }
