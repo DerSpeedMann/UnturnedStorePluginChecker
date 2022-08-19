@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpeedMann.UpdateChecker.Models
+namespace SpeedMann.PluginChecker.Models
 {
     public enum WorkshopResult
     {

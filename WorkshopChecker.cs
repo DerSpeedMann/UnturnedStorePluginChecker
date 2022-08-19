@@ -1,11 +1,11 @@
 ﻿using Rocket.Core.Logging;
 using SDG.Unturned;
-using SpeedMann.UpdateChecker.Models;
-using SpeedMann.UpdateChecker.Models.UStore;
+using SpeedMann.PluginChecker.Models;
+using SpeedMann.PluginChecker.Models.UStore;
 using Steamworks;
 using System.Collections.Generic;
 
-namespace SpeedMann.UpdateChecker
+namespace SpeedMann.PluginChecker
 {
     public class WorkshopChecker
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpeedMann.UpdateChecker
+namespace SpeedMann.PluginChecker
 {
     public class FileVersionReader
     {

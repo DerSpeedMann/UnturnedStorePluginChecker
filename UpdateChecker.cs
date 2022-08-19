@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Logger = Rocket.Core.Logging.Logger;
 
 
-namespace SpeedMann.UpdateChecker
+namespace SpeedMann.PluginChecker
 {
 	public class UpdateChecker
 	{

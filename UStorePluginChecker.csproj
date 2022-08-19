@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{A6EFCE07-C388-41AE-BEFE-54AAA4EAFC17}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>SpeedMann.UpdateChecker</RootNamespace>
+    <RootNamespace>SpeedMann.PluginChecker</RootNamespace>
     <AssemblyName>UStorePluginChecker</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetFrameworkProfile />

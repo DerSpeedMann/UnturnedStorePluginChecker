@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpeedMann.UpdateChecker.Models.UStore
+namespace SpeedMann.PluginChecker.Models.UStore
 {
     public class Branch
     {
