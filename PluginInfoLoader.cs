@@ -65,6 +65,7 @@ namespace SpeedMann.UpdateChecker
                 Logger.LogException(e, $"Exeption loading product {productId} from UnturnedStore!");
                 return;
             }
+            LoadedProducts.Add(productId, deserializedProduct);
             calledFunction?.Invoke(true, deserializedProduct);
         }
 

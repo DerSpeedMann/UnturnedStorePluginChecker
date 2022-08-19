@@ -8,7 +8,7 @@
     <ProjectGuid>{A6EFCE07-C388-41AE-BEFE-54AAA4EAFC17}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>SpeedMann.UpdateChecker</RootNamespace>
-    <AssemblyName>UpdateChecker</AssemblyName>
+    <AssemblyName>UStorePluginChecker</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>

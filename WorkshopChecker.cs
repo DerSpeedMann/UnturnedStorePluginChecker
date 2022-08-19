@@ -32,13 +32,18 @@ namespace SpeedMann.UpdateChecker
             this.pluginName = pluginName;
             this.productId = productId;
         }
-        public void loadWorkshopItems()
+        public bool tryAddStoreWorkshopItems()
         {
-            PluginInfoLoader.loadPluginInfo(loadedWorkshopInfo, productId);
+            if (PluginInfoLoader.tryGetPluginInfo(productId, out Product product))
+            {
+                addWorkshopItems(product);
+                return true;
+            }
+            return false;
         }
-        private void loadedWorkshopInfo(bool success, Product pluginInfo)
+        private void addWorkshopItems(Product pluginInfo)
         {
-            if (success && pluginInfo?.workshopItems != null)
+            if (pluginInfo?.workshopItems != null)
             {
                 foreach (WorkshopItem item in pluginInfo?.workshopItems)
                 {
@@ -48,6 +53,16 @@ namespace SpeedMann.UpdateChecker
                     }
                 }
             }
+        }
+        public bool checkSetWorkshopItems(WorkshopCheckCompletion calledMethod)
+        {
+            List<WorkshopItem> list = new List<WorkshopItem>();
+
+            foreach (KeyValuePair<ulong, WorkshopItem> entry in workshopItemDict)
+            {
+                list.Add(entry.Value);
+            }
+            return checkWorkshopItems(list, calledMethod);
         }
         public bool checkWorkshopItem(ulong workshopId, bool required, WorkshopCheckCompletion calledMethod)
         {

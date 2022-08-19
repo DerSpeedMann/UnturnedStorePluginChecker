@@ -16,7 +16,7 @@ namespace SpeedMann.UpdateChecker
 
         private const string StoreUrl = "https://unturnedstore.com/products/";
 
-        private UpdateCheckCompletion OnChecKCompletion;
+        private UpdateCheckCompletion OnCheckCompletion;
         private string currentPluginVersion = "";
         private string pluginName = "";
         private string branchName = "";
@@ -33,33 +33,17 @@ namespace SpeedMann.UpdateChecker
             branchName = branch;
         }
 
-        public void loadAndCheckPluginVersion(UpdateCheckCompletion calledMethod)
-        {
-            OnChecKCompletion = calledMethod;
-            loaded = false;
-            requiresUpdate = false;
-
-            PluginInfoLoader.loadPluginInfo(checkVersion, productId);
-        }
-        public bool tryCheckPluginVersion()
+        public bool tryCheckPluginVersion(out string newestVersion)
         {
             loaded = false;
             requiresUpdate = false;
+            newestVersion = currentPluginVersion;
             if (PluginInfoLoader.tryGetPluginInfo(productId, out Product pluginInfo))
             {
-                checkVersion(true, pluginInfo);
+                checkVerionInner(pluginInfo, out newestVersion);
                 return true;
             }
             return false;
-        }
-        private void checkVersion(bool success, Product pluginInfo)
-        {
-            if (!success)
-            {
-                OnChecKCompletion.Invoke(false, "");
-                return;
-            }
-            OnChecKCompletion.Invoke(checkVerionInner(pluginInfo, out string newestVersion), newestVersion);
         }
         private bool checkVerionInner(Product pluginInfo, out string newestVersion)
         {
