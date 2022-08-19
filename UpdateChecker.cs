@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
-using SpeedMann.UpdateChecker.Models;
-using SpeedMann.UpdateChecker.Models.UStore;
+using SpeedMann.PluginChecker.Models;
+using SpeedMann.PluginChecker.Models.UStore;
 using System;
 using System.IO;
 using System.Net;

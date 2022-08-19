@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Rocket.Core.Logging;
-using SpeedMann.UpdateChecker.Models;
-using SpeedMann.UpdateChecker.Models.UStore;
+using SpeedMann.PluginChecker.Models;
+using SpeedMann.PluginChecker.Models.UStore;
 using System;
 using System.Collections.Generic;
 using System.IO;
