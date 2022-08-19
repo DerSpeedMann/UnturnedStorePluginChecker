@@ -9,13 +9,11 @@ namespace SpeedMann.UpdateChecker.Models
     public class WorkshopItemData
     {
         public ulong id;
-        public string displayText;
         public bool required;
         public WorkshopResult result;
-        public WorkshopItemData(ulong workshopId, string itemDisplayText, bool required)
+        public WorkshopItemData(ulong workshopId, bool required)
         {
             this.id = workshopId;
-            this.displayText = itemDisplayText;
             this.required = required;
             result = WorkshopResult.None;
         }

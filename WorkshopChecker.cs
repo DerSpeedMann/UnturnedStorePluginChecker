@@ -13,20 +13,20 @@ namespace SpeedMann.UpdateChecker
         private string pluginName;
         private uint productId;
 
-        public delegate void WorkshopCheckCompletion(bool success, List<WorkshopItemData> workshopsData);
+        public delegate void WorkshopCheckCompletion(bool success, List<WorkshopItem> workshopsData);
 
         private WorkshopCheckCompletion onCompletion;
         private UGCQueryHandle_t queryHandle;
-        private Dictionary<ulong, WorkshopItemData> workshopItemDict;
-        private List<WorkshopItemData> workshopData;
+        private Dictionary<ulong, WorkshopItem> workshopItemDict;
+        private List<WorkshopItem> workshopData;
 
         private bool loaded = false;
         private bool valid = false;
-        public WorkshopChecker(string pluginName, uint productId, Dictionary<ulong, WorkshopItemData> workshopItems = null)
+        public WorkshopChecker(string pluginName, uint productId, Dictionary<ulong, WorkshopItem> workshopItems = null)
         {
             if(workshopItems == null)
             {
-                workshopItems = new Dictionary<ulong, WorkshopItemData>();
+                workshopItems = new Dictionary<ulong, WorkshopItem>();
             }
             workshopItemDict = workshopItems;
             this.pluginName = pluginName;
@@ -44,16 +44,16 @@ namespace SpeedMann.UpdateChecker
                 {
                     if (!workshopItemDict.ContainsKey(item.workshopFileId))
                     {
-                        workshopItemDict.Add(item.workshopFileId, new WorkshopItemData(item.workshopFileId, item.workshopFileId.ToString(), item.required));
+                        workshopItemDict.Add(item.workshopFileId, new WorkshopItem(item.workshopFileId, item.required));
                     }
                 }
             }
         }
-        public bool checkWorkshopItem(ulong workshopId, string displaySting, bool required, WorkshopCheckCompletion calledMethod)
+        public bool checkWorkshopItem(ulong workshopId, bool required, WorkshopCheckCompletion calledMethod)
         {
-            return checkWorkshopItems(new List<WorkshopItemData> { new WorkshopItemData(workshopId, displaySting, required) }, calledMethod);
+            return checkWorkshopItems(new List<WorkshopItem> { new WorkshopItem(workshopId, required) }, calledMethod);
         }
-        public bool checkWorkshopItems(List<WorkshopItemData> workshopItems, WorkshopCheckCompletion calledMethod)
+        public bool checkWorkshopItems(List<WorkshopItem> workshopItems, WorkshopCheckCompletion calledMethod)
         {
             onCompletion = calledMethod;
 
@@ -61,12 +61,12 @@ namespace SpeedMann.UpdateChecker
             PublishedFileId_t[] ids = new PublishedFileId_t[workshopItems.Count];
             for (int i = 0; i < workshopItems.Count; i++)
             {
-                if (workshopItems[i].required && !WorkshopDownloadConfig.getOrLoad().File_IDs.Contains(workshopItems[i].id))
+                if (workshopItems[i].required && !WorkshopDownloadConfig.getOrLoad().File_IDs.Contains(workshopItems[i].workshopFileId))
                 {
-                    CommandWindow.LogError($"{workshopItems[i].displayText} is not present in the WorkshopDownloadConfig.json!");
+                    CommandWindow.LogError($"{workshopItems[i].workshopFileId} is not present in the WorkshopDownloadConfig.json!");
                     return false;
                 }
-                ids[i] = new PublishedFileId_t(workshopItems[i].id);
+                ids[i] = new PublishedFileId_t(workshopItems[i].workshopFileId);
             }
 
             workshopData = workshopItems;
@@ -105,12 +105,12 @@ namespace SpeedMann.UpdateChecker
             valid = true;
             for (uint i = 0; i < workshopData.Count; i++)
             {
-                WorkshopItemData item = workshopData[(int)i];
+                WorkshopItem item = workshopData[(int)i];
                 SteamUGCDetails_t steamUGCDetails_t;
                 if (!SteamGameServerUGC.GetQueryUGCResult(queryHandle, i, out steamUGCDetails_t))
                 {
                     valid = false;
-                    Logger.LogWarning($"Workshop query unable to get details for {item.displayText} [{item.id}] of {pluginName}");
+                    Logger.LogWarning($"Workshop query unable to get details for [{item.workshopFileId}] of {pluginName}");
                     continue;
                 }
 
@@ -137,12 +137,12 @@ namespace SpeedMann.UpdateChecker
                     case EWorkshopDownloadRestrictionResult.NotWhitelisted:
                         valid = false;
                         item.result = WorkshopResult.NotWhitelisted;
-                        Logger.LogError($"Not authorized in the IP whitelist for {item.displayText} [{item.id}] of {pluginName}");
+                        Logger.LogError($"Not authorized in the IP whitelist for [{item.workshopFileId}] of {pluginName}");
                         break;
                     case EWorkshopDownloadRestrictionResult.Blacklisted:
                         valid = false;
                         item.result = WorkshopResult.Blacklisted;
-                        Logger.LogError($"Blocked in IP blacklist for {item.displayText} [{item.id}] of {pluginName}");
+                        Logger.LogError($"Blocked in IP blacklist for [{item.workshopFileId}] of {pluginName}");
                         break;
                     case EWorkshopDownloadRestrictionResult.Allowed:
                         item.result = WorkshopResult.Allowed;
@@ -150,17 +150,17 @@ namespace SpeedMann.UpdateChecker
                     case EWorkshopDownloadRestrictionResult.Banned:
                         valid = false;
                         item.result = WorkshopResult.Banned;
-                        Logger.LogError($"Workshop file {item.displayText} [{item.id}] of {pluginName} is banned");
+                        Logger.LogError($"Workshop file [{item.workshopFileId}] of {pluginName} is banned");
                         break;
                     case EWorkshopDownloadRestrictionResult.PrivateVisibility:
                         valid = false;
                         item.result = WorkshopResult.PrivateVisibility;
-                        Logger.LogError($"Workshop file {item.displayText} [{item.id}] of {pluginName} is private");
+                        Logger.LogError($"Workshop file [{item.workshopFileId}] of {pluginName} is private");
                         break;
                     default:
                         valid = false;
                         item.result = WorkshopResult.Unknown;
-                        Logger.LogError($"Unknown restriction result '{restrictionResult}' for '{item.displayText}'");
+                        Logger.LogError($"Unknown restriction result '{restrictionResult}' for '{item.workshopFileId}'");
                         break;
                 }
             }

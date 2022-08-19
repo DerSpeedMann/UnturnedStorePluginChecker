@@ -10,5 +10,16 @@ namespace SpeedMann.UpdateChecker.Models.UStore
     {
         public ulong workshopFileId;
         public bool required;
+        public WorkshopResult result = WorkshopResult.None;
+        public WorkshopItem()
+        {
+
+        }
+        public WorkshopItem(ulong workshopId, bool required)
+        {
+            this.workshopFileId = workshopId;
+            this.required = required;
+            result = WorkshopResult.None;
+        }
     }
 }
