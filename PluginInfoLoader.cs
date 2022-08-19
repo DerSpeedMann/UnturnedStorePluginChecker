@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace SpeedMann.UpdateChecker
 {
-    internal class PluginInfoLoader
+    public class PluginInfoLoader
     {
         private const string ApiUrl = "https://unturnedstore.com/api/products/";
 

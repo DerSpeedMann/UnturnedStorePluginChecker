@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace SpeedMann.UpdateChecker
 {
-    internal class WorkshopChecker
+    public class WorkshopChecker
     {
         private static uint serverIp;
         private string pluginName;
