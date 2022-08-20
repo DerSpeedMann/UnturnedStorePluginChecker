@@ -28,6 +28,7 @@ namespace SpeedMann.PluginChecker
             {
                 workshopItems = new Dictionary<ulong, WorkshopItem>();
             }
+            workshopData = new List<WorkshopItem>();
             workshopItemDict = workshopItems;
             this.pluginName = pluginName;
             this.productId = productId;
@@ -53,11 +54,23 @@ namespace SpeedMann.PluginChecker
         {
             return WorkshopDownloadConfig.getOrLoad().File_IDs.Contains(workshopId);
         }
+        public List<WorkshopItem> getMissingWorkshopItems()
+        {
+            List<WorkshopItem> missingWorkshopItems = new List<WorkshopItem>();
+            foreach (WorkshopItem item in workshopData)
+            {
+                if(!item.enabled && item.required)
+                {
+                    missingWorkshopItems.Add(item);
+                }
+            }
+            return missingWorkshopItems;
+        }
         public Dictionary<ulong, WorkshopItem> getSetWorkshopItems()
         {
             return workshopItemDict;
         }
-        public bool checkSetWorkshopItems(WorkshopCheckCompletion calledMethod, bool checkRequired = true)
+        public bool checkSetWorkshopItems(WorkshopCheckCompletion calledMethod, bool checkRequired = false)
         {
             List<WorkshopItem> list = new List<WorkshopItem>();
 
@@ -71,7 +84,7 @@ namespace SpeedMann.PluginChecker
         {
             return checkWorkshopItems(new List<WorkshopItem> { new WorkshopItem(workshopId, required) }, calledMethod);
         }
-        public bool checkWorkshopItems(List<WorkshopItem> workshopItems, WorkshopCheckCompletion calledMethod, bool checkRequired = true)
+        public bool checkWorkshopItems(List<WorkshopItem> workshopItems, WorkshopCheckCompletion calledMethod, bool checkRequired = false)
         {
             onCompletion = calledMethod;
 
