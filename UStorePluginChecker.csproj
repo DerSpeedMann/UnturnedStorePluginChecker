@@ -67,7 +67,6 @@
     <Compile Include="Models\UStore\Product.cs" />
     <Compile Include="Models\UStore\Version.cs" />
     <Compile Include="Models\UStore\WorkshopItem.cs" />
-    <Compile Include="Models\WorkshopItemData.cs" />
     <Compile Include="Models\WorkshopResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PluginInfoLoader.cs" />

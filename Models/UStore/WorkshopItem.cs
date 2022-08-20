@@ -11,6 +11,7 @@ namespace SpeedMann.PluginChecker.Models.UStore
         public ulong workshopFileId;
         public bool required;
         public WorkshopResult result = WorkshopResult.None;
+        public bool enabled = false;
         public WorkshopItem()
         {
 

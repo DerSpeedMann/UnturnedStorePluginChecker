@@ -20,7 +20,7 @@ namespace SpeedMann.PluginChecker
         private Dictionary<ulong, WorkshopItem> workshopItemDict;
         private List<WorkshopItem> workshopData;
 
-        private bool loaded = false;
+        private bool checkCompleted = false;
         private bool valid = false;
         public WorkshopChecker(string pluginName, uint productId, Dictionary<ulong, WorkshopItem> workshopItems = null)
         {
@@ -34,11 +34,11 @@ namespace SpeedMann.PluginChecker
         }
         public bool areWorkshopItemsValid()
         {
-            return areWorkshopItemsLoaded() && valid;
+            return isWorkshopCheckCompleted() && valid;
         }
-        public bool areWorkshopItemsLoaded()
+        public bool isWorkshopCheckCompleted()
         {
-            return loaded;
+            return checkCompleted;
         }
         public bool tryAddStoreWorkshopItems()
         {
@@ -48,6 +48,10 @@ namespace SpeedMann.PluginChecker
                 return true;
             }
             return false;
+        }
+        public bool isWorkshopItemEnabled(ulong workshopId)
+        {
+            return WorkshopDownloadConfig.getOrLoad().File_IDs.Contains(workshopId);
         }
         public Dictionary<ulong, WorkshopItem> getSetWorkshopItems()
         {
@@ -75,7 +79,8 @@ namespace SpeedMann.PluginChecker
             PublishedFileId_t[] ids = new PublishedFileId_t[workshopItems.Count];
             for (int i = 0; i < workshopItems.Count; i++)
             {
-                if (checkRequired && workshopItems[i].required && !WorkshopDownloadConfig.getOrLoad().File_IDs.Contains(workshopItems[i].workshopFileId))
+                workshopItems[i].enabled = isWorkshopItemEnabled(workshopItems[i].workshopFileId);
+                if (checkRequired && workshopItems[i].required && !workshopItems[i].enabled)
                 {
                     CommandWindow.LogError($"{workshopItems[i].workshopFileId} is not present in the WorkshopDownloadConfig.json!");
                     return false;
@@ -179,7 +184,7 @@ namespace SpeedMann.PluginChecker
                 }
             }
             this.valid = valid;
-            loaded = true;
+            checkCompleted = true;
             onCompletion?.Invoke(valid, workshopData);
         }
         private void addWorkshopItems(Product pluginInfo)
