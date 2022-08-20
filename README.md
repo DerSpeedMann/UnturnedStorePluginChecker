@@ -88,11 +88,12 @@ If you have questions, feature request or find any bugs, please contact me on Di
             Inst.Unload();
         }
         
-        // is successful if all required mods are loaded and if the server ip is allowed to access the files
+        // is successful if all required mods are loaded and if the server ip is allowed to access all files
         private static void workshopCheckCompleted(bool success, List<WorkshopItem> workshopsData)
         {
             if (!success)
             {
+                // the WorkshopItem list contains the results of every single workshop item checked
                 Inst.Unload();
             }
         }
