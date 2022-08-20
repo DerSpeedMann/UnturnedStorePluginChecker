@@ -65,13 +65,16 @@
         {
             if (success)
             {
-                // automatically check all workshop items set on UnturnedStore
-                workshopChecker.tryAddStoreWorkshopItems(); // add all workshop items set on unturned store
-                workshopChecker.checkSetWorkshopItems(workshopCheckCompleted); // checks all set workshop items
-                
-                // for manual workshop checking use:
-                // bool checkWorkshopItem(ulong workshopId, bool required, WorkshopCheckCompletion calledMethod)
-                // bool checkWorkshopItems(List<WorkshopItem> workshopItems, WorkshopCheckCompletion calledMethod)
+                if(workshopCheck)
+                {
+                    // automatically check all workshop items set on UnturnedStore
+                    workshopChecker.tryAddStoreWorkshopItems(); // add all workshop items set on unturned store
+                    workshopChecker.checkSetWorkshopItems(workshopCheckCompleted); // checks all set workshop items
+
+                    // for manual workshop checking use:
+                    // bool checkWorkshopItem(ulong workshopId, bool required, WorkshopCheckCompletion calledMethod)
+                    // bool checkWorkshopItems(List<WorkshopItem> workshopItems, WorkshopCheckCompletion calledMethod)
+                }
                 
                 // check plugin version
                 if (!updateChecker.tryCheckPluginVersion(out string newestVersion))
