@@ -32,6 +32,14 @@ namespace SpeedMann.PluginChecker
             this.pluginName = pluginName;
             this.productId = productId;
         }
+        public bool areWorkshopItemsValid()
+        {
+            return areWorkshopItemsLoaded() && valid;
+        }
+        public bool areWorkshopItemsLoaded()
+        {
+            return loaded;
+        }
         public bool tryAddStoreWorkshopItems()
         {
             if (PluginInfoLoader.tryGetPluginInfo(productId, out Product product))
@@ -41,20 +49,11 @@ namespace SpeedMann.PluginChecker
             }
             return false;
         }
-        private void addWorkshopItems(Product pluginInfo)
+        public Dictionary<ulong, WorkshopItem> getSetWorkshopItems()
         {
-            if (pluginInfo?.workshopItems != null)
-            {
-                foreach (WorkshopItem item in pluginInfo?.workshopItems)
-                {
-                    if (!workshopItemDict.ContainsKey(item.workshopFileId))
-                    {
-                        workshopItemDict.Add(item.workshopFileId, new WorkshopItem(item.workshopFileId, item.required));
-                    }
-                }
-            }
+            return workshopItemDict;
         }
-        public bool checkSetWorkshopItems(WorkshopCheckCompletion calledMethod)
+        public bool checkSetWorkshopItems(WorkshopCheckCompletion calledMethod, bool checkRequired = true)
         {
             List<WorkshopItem> list = new List<WorkshopItem>();
 
@@ -62,13 +61,13 @@ namespace SpeedMann.PluginChecker
             {
                 list.Add(entry.Value);
             }
-            return checkWorkshopItems(list, calledMethod);
+            return checkWorkshopItems(list, calledMethod, checkRequired);
         }
         public bool checkWorkshopItem(ulong workshopId, bool required, WorkshopCheckCompletion calledMethod)
         {
             return checkWorkshopItems(new List<WorkshopItem> { new WorkshopItem(workshopId, required) }, calledMethod);
         }
-        public bool checkWorkshopItems(List<WorkshopItem> workshopItems, WorkshopCheckCompletion calledMethod)
+        public bool checkWorkshopItems(List<WorkshopItem> workshopItems, WorkshopCheckCompletion calledMethod, bool checkRequired = true)
         {
             onCompletion = calledMethod;
 
@@ -76,7 +75,7 @@ namespace SpeedMann.PluginChecker
             PublishedFileId_t[] ids = new PublishedFileId_t[workshopItems.Count];
             for (int i = 0; i < workshopItems.Count; i++)
             {
-                if (workshopItems[i].required && !WorkshopDownloadConfig.getOrLoad().File_IDs.Contains(workshopItems[i].workshopFileId))
+                if (checkRequired && workshopItems[i].required && !WorkshopDownloadConfig.getOrLoad().File_IDs.Contains(workshopItems[i].workshopFileId))
                 {
                     CommandWindow.LogError($"{workshopItems[i].workshopFileId} is not present in the WorkshopDownloadConfig.json!");
                     return false;
@@ -183,13 +182,18 @@ namespace SpeedMann.PluginChecker
             loaded = true;
             onCompletion?.Invoke(valid, workshopData);
         }
-        public bool areWorkshopItemsValid()
+        private void addWorkshopItems(Product pluginInfo)
         {
-            return areWorkshopItemsLoaded() && valid;
-        }
-        public bool areWorkshopItemsLoaded()
-        {
-            return loaded;
+            if (pluginInfo?.workshopItems != null)
+            {
+                foreach (WorkshopItem item in pluginInfo?.workshopItems)
+                {
+                    if (!workshopItemDict.ContainsKey(item.workshopFileId))
+                    {
+                        workshopItemDict.Add(item.workshopFileId, new WorkshopItem(item.workshopFileId, item.required));
+                    }
+                }
+            }
         }
     }
 }
