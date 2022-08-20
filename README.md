@@ -46,9 +46,9 @@ If you have questions, feature request or find any bugs, please contact me on Di
         
         private void onPlayerConnection(UnturnedPlayer player)
         {
-            if (updateChecker.updateRequired(out string version) && player.isAdmin)
+            if (updateChecker.updateRequired(out string storeVersion) && player.isAdmin)
             {
-                ChatManager.say(player.CSteamID, $"{PluginName} {version} is available please update!", Color.yellow);
+                ChatManager.say(player.CSteamID, $"{PluginName} {storeVersion} is available please update!", Color.yellow);
             }
         }
         
@@ -79,7 +79,7 @@ If you have questions, feature request or find any bugs, please contact me on Di
                 }
                 
                 // check plugin version
-                if (!updateChecker.tryCheckPluginVersion(out string newestVersion))
+                if (!updateChecker.tryCheckPluginVersion(out string storeVersion))
                 {
                     Logger.LogError("Could not check plugin version!");
                 }
