@@ -3,6 +3,8 @@
 * **UpdateChecker**: allows checking for plugin updates for any plugin on https://unturnedstore.com  
 * **WorkshopChecker**: allows checking if required mods are loaded and if the server ip is whitelisted / not blacklisted from any workshop item.
 
+# Contact:
+If you have questions, feature request or find any bugs, please contact me on Discord SpeedMann#7437
 
 # Setup:
 ```cs
@@ -97,4 +99,3 @@
  }
 ```
 
-If you have questions, feature request or find any bugs, please contact me on Discord SpeedMann#7437
