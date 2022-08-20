@@ -47,9 +47,25 @@ If you have questions, feature request or find any bugs, please contact me on Di
         
         private void onPlayerConnection(UnturnedPlayer player)
         {
-            if (updateChecker.updateRequired(out string storeVersion) && player.isAdmin)
+            if (player.isAdmin)
             {
-                ChatManager.say(player.CSteamID, $"{PluginName} {storeVersion} is available please update!", Color.yellow);
+                if(updateChecker.updateRequired(out string storeVersion))
+                {
+                    ChatManager.say(player.CSteamID, $"{PluginName} {storeVersion} is available please update!", Color.yellow);
+                }
+                if (workshopChecker.isWorkshopCheckCompleted())
+                {
+                    List<WorkshopItem> missingItems = workshopChecker.getMissingWorkshopItems();
+                    StringBuilder assetIds = new StringBuilder();
+                    foreach (WorkshopItem item in missingItems)
+                    {
+                        assetIds.Append(item.workshopFileId + " ");
+                    }
+                    if(missingItems.Count > 0)
+                    {
+                        ChatManager.say(player.CSteamID, $"You are missing the following required Workshop items for {PluginName}:\n{assetIds}", Color.yellow);
+                    }
+                }
             }
         }
         
@@ -92,9 +108,16 @@ If you have questions, feature request or find any bugs, please contact me on Di
         // is successful if all required mods are loaded and if the server ip is allowed to access all files
         private static void workshopCheckCompleted(bool success, List<WorkshopItem> workshopsData)
         {
-            if (!success)
+            // the WorkshopItem list contains the results of every single workshop item checked
+            foreach (WorkshopItem item in workshopsData)
             {
-                // the WorkshopItem list contains the results of every single workshop item checked
+                if (!item.enabled && item.required)
+                {
+                    Logger.LogWarning($"The mod [{item.workshopFileId}] is required for {PluginName}");
+                }
+            }
+            if (!success)
+            {   
                 Inst.Unload();
             }
         }
