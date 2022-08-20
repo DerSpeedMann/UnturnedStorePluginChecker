@@ -12,10 +12,11 @@ If you have questions, feature request or find any bugs, please contact me on Di
  {
         public static Plugin Inst;
         public static PluginConfiguration Conf;
-        public static PluginChecker.UpdateChecker updateChecker;
-        public static PluginChecker.WorkshopChecker workshopChecker;
-        public static string PluginName = "ExamplePlugin";
-        public static string Version;
+        public const string PluginName = "ExamplePlugin";
+        public static string Version { get; private set; }
+        
+        private static PluginChecker.UpdateChecker updateChecker;
+        private static PluginChecker.WorkshopChecker workshopChecker;
         private uint productId = 1; // your unturned store product id
         
         //you can use debug builds to test on a local server with active workshop ip whitelists
