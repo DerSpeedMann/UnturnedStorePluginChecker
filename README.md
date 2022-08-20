@@ -16,7 +16,7 @@
         public static string Version;
         private uint productId = 1; // your unturned store product id
         
-        //you can use debug to test on a local server with active workshop ip whitelists
+        //you can use debug builds to test on a local server with active workshop ip whitelists
         #if DEBUG
             private const bool workshopCheck = false;
         #else
