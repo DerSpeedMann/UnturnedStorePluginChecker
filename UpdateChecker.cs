@@ -16,12 +16,11 @@ namespace SpeedMann.PluginChecker
 
         private const string StoreUrl = "https://unturnedstore.com/products/";
 
-        private UpdateCheckCompletion OnCheckCompletion;
         private string currentPluginVersion = "";
         private string pluginName = "";
         private string branchName = "";
         private uint productId;
-        private string storeVersion = "";
+        private string _storeVersion = "";
         private bool requiresUpdate = false;
         private bool loaded = false;
 
@@ -32,12 +31,22 @@ namespace SpeedMann.PluginChecker
             this.productId = productId;
             branchName = branch;
         }
-
-        public bool tryCheckPluginVersion(out string newestVersion)
+        public bool updateRequired(out string storeVersion)
+        {
+            storeVersion = _storeVersion;
+            return isStoreVersionLoaded(out _) && requiresUpdate;
+        }
+        public bool isStoreVersionLoaded(out string storeVersion)
+        {
+            storeVersion = _storeVersion;
+            return loaded;
+        }
+        public bool tryCheckPluginVersion(out string storeVersion)
         {
             loaded = false;
             requiresUpdate = false;
-            newestVersion = currentPluginVersion;
+            storeVersion = _storeVersion;
+            string newestVersion = currentPluginVersion;
             if (PluginInfoLoader.tryGetPluginInfo(productId, out Product pluginInfo))
             {
                 checkVerionInner(pluginInfo, out newestVersion);
@@ -56,20 +65,20 @@ namespace SpeedMann.PluginChecker
                     {
                         if (b.versions[y].isEnabled)
                         {
-                            storeVersion = b.versions[y].name;
+                            _storeVersion = b.versions[y].name;
                             break;
                         }
                     }
                     break;
                 }
             }
-            if (storeVersion == "")
+            if (_storeVersion == "")
             {
                 Logger.LogError($"newest store version of {pluginName} {branchName} was not found");
                 return false;
             }
 
-            requiresUpdate = checkVersionNumbers(currentPluginVersion, storeVersion, out newestVersion);
+            requiresUpdate = checkVersionNumbers(currentPluginVersion, _storeVersion, out newestVersion);
             loaded = true;
 
             if (requiresUpdate)
@@ -108,15 +117,5 @@ namespace SpeedMann.PluginChecker
             newestVersion = currentVersion;
             return false;
         }
-        public bool updateRequired(out string foundVersion)
-        {
-            return isStoreVersionLoaded(out foundVersion) && requiresUpdate;
-        }
-        public bool isStoreVersionLoaded(out string foundVersion)
-        {
-            foundVersion = storeVersion;
-            return loaded;
-        }
-        
     }
 }
