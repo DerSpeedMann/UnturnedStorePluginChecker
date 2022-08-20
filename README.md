@@ -1,7 +1,7 @@
 # UnturnedStore Plugin Checker
 
 * **UpdateChecker**: allows checking for plugin updates for any plugin on https://unturnedstore.com  
-* **WorkshopChecker**: allows checking if required mods are loaded and if the server ip is whitelisted / not blacklisted from any workshop item.
+* **WorkshopChecker**: allows checking if required mods are loaded and if any workshop whitelist / blacklist affects the current server ip (This can be used to whitelist or blacklist servers from using the plugin)
 
 # Contact:
 If you have questions, feature request or find any bugs, please contact me on Discord SpeedMann#7437
