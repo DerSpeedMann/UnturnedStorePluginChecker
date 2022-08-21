@@ -35,38 +35,49 @@ namespace SpeedMann.PluginChecker
             return LoadedProducts.ContainsKey(pluginId);
         }
 
-        public static void loadPluginInfo(PluginQuerryCompletion calledMethod, uint productId)
+        public static void loadPluginInfo(PluginQuerryCompletion calledMethod, uint productId, int retries = 2)
         {
             if (isPluginInfoLoaded(productId))
             {
                 calledMethod.Invoke(true, LoadedProducts[productId]);
                 return;
             }
-            loadProductAsync(calledMethod, productId);
+            loadProductAsync(calledMethod, productId, retries);
         }
 
-        private static async void loadProductAsync(PluginQuerryCompletion calledFunction, uint productId)
+        private static async void loadProductAsync(PluginQuerryCompletion calledFunction, uint productId, int retries)
         {
             WebRequest wr = WebRequest.Create(ApiUrl + productId);
             wr.Method = "GET";
             Product deserializedProduct;
-            try
+            int currentRetry = 0;
+            while(true)
             {
-                WebResponse response = await wr.GetResponseAsync();
-                Stream dataStream = response.GetResponseStream();
-                JsonTextReader reader = new JsonTextReader(new StreamReader(dataStream));
-                var serializer = new JsonSerializer();
+                try
+                {
+                    WebResponse response = await wr.GetResponseAsync();
+                    Stream dataStream = response.GetResponseStream();
+                    JsonTextReader reader = new JsonTextReader(new StreamReader(dataStream));
+                    var serializer = new JsonSerializer();
 
-                deserializedProduct = serializer.Deserialize<Product>(reader);
-            }
-            catch (Exception e)
-            {
-                calledFunction?.Invoke(false, null);
-                Logger.LogException(e, $"Exeption loading product {productId} from UnturnedStore!");
+                    deserializedProduct = serializer.Deserialize<Product>(reader);
+                }
+                catch (Exception e)
+                {
+                    currentRetry++;
+                    if (currentRetry <= retries)
+                    {
+                        continue;
+                    }
+                    calledFunction?.Invoke(false, null);
+                    Logger.LogException(e, $"Exeption loading product {productId} from UnturnedStore after {retries} reties!");
+                    return;
+                }
+                LoadedProducts.Add(productId, deserializedProduct);
+                calledFunction?.Invoke(true, deserializedProduct);
                 return;
             }
-            LoadedProducts.Add(productId, deserializedProduct);
-            calledFunction?.Invoke(true, deserializedProduct);
+
         }
 
         
