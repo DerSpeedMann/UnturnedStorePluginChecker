@@ -34,17 +34,26 @@ If you have questions, feature request or find any bugs, please contact me on Di
             
             updateChecker = new PluginChecker.UpdateChecker(Version, PluginName, productId);
             workshopChecker = new PluginChecker.WorkshopChecker(PluginName, productId);
-
-            PluginChecker.PluginInfoLoader.loadPluginInfo(pluginInfoLoaded, productId); // loads plugin info from UnturnedStore
+            
             U.Events.OnPlayerConnected += onPlayerConnection;
+            Level.onPostLevelLoaded += onPostLevelLoaded;
+
+            if (Level.isLoaded) 
+            {
+                OnPostLevelLoaded(0);
+            }
         }
         
         protected override void Unload()
         {
             Logger.Log($"Unloading {PluginName}... ");
             U.Events.OnPlayerConnected -= onPlayerConnection;
+            Level.onPostLevelLoaded -= onPostLevelLoaded;
         }
-        
+        private void OnPostLevelLoaded(int level)
+        {
+            PluginChecker.PluginInfoLoader.loadPluginInfo(pluginInfoLoaded, productId); // loads plugin info from UnturnedStore
+        }
         private void onPlayerConnection(UnturnedPlayer player)
         {
             if (player.isAdmin)
