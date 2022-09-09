@@ -18,6 +18,10 @@ If you have questions, feature request or find any bugs, please contact me on Di
         private static PluginChecker.UpdateChecker updateChecker;
         private static PluginChecker.WorkshopChecker workshopChecker;
         private uint productId = 1; // your unturned store product id
+        private List<WorkshopItem> workshopItems = new List<WorkshopItem>() // The backup workshop ids used if no connection to UnturnedStore can be established
+        {
+            new WorkshopItem(1, true) 
+        };
         
         //you can use debug builds to test on a local server with active workshop ip whitelists
         #if DEBUG
@@ -111,7 +115,9 @@ If you have questions, feature request or find any bugs, please contact me on Di
                 }
                 return;
             }
-            Inst.Unload();
+            
+            Logger.LogError("Could not check plugin version!");
+            workshopChecker.checkWorkshopItems(workshopItems, workshopCheckCompleted);
         }
         
         // is successful if all required mods are loaded and if the server ip is allowed to access all files
@@ -127,8 +133,13 @@ If you have questions, feature request or find any bugs, please contact me on Di
             }
             if (!success)
             {   
-                Inst.Unload();
+                unloadRocketPlugin();
             }
+        }
+        private static void unloadRocketPlugin()
+        {
+            RocketPlugin p = (RocketPlugin)R.Plugins.GetPlugins().Where(pl => pl.Name.ToLower().Contains(PluginName.ToLower())).FirstOrDefault();
+            p.UnloadPlugin();
         }
  }
 ```
