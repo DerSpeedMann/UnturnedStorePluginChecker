@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SpeedMann.PluginChecker
@@ -67,10 +68,11 @@ namespace SpeedMann.PluginChecker
                     currentRetry++;
                     if (currentRetry <= retries)
                     {
+                        Thread.Sleep(1000);
                         continue;
                     }
                     calledFunction?.Invoke(false, null);
-                    Logger.LogException(e, $"Exeption loading product {productId} from UnturnedStore after {retries} reties!");
+                    Logger.LogWarning($"Could not load product {productId} from UnturnedStore.com after {retries} retries!");
                     return;
                 }
                 LoadedProducts.Add(productId, deserializedProduct);
