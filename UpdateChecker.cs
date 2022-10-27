@@ -91,10 +91,11 @@ namespace SpeedMann.PluginChecker
         }
         private bool checkVersionNumbers(string currentVersion, string foundVersion, out string newestVersion)
         {
+            newestVersion = currentVersion;
 
             string[] currentVersionSplit = currentVersion.Split('.');
-            string[] newestVersionSplit = foundVersion.Split('.');
-            int smallestCount = currentVersionSplit.Length > newestVersionSplit.Length ? newestVersionSplit.Length : currentVersionSplit.Length;
+            string[] foundVersionSplit = foundVersion.Split('.');
+            int smallestCount = currentVersionSplit.Length > foundVersionSplit.Length ? foundVersionSplit.Length : currentVersionSplit.Length;
 
             for (int i = 0; i < smallestCount; i++)
             {
@@ -103,18 +104,21 @@ namespace SpeedMann.PluginChecker
                     Logger.LogError($"Failed to parse local version number {currentVersionSplit[i]} for {pluginName}!");
                     continue;
                 }
-                if (!int.TryParse(newestVersionSplit[i], out int newest))
+                if (!int.TryParse(foundVersionSplit[i], out int found))
                 {
-                    Logger.LogError($"Failed to parse remote version number {newestVersionSplit[i]} for {pluginName}!");
+                    Logger.LogError($"Failed to parse remote version number {foundVersionSplit[i]} for {pluginName}!");
                     continue;
                 }
-                if (newest > current)
+                if (found > current)
                 {
                     newestVersion = foundVersion;
                     return true;
                 }
+                else if (found < current)
+                {
+                    return false;
+                }
             }
-            newestVersion = currentVersion;
             return false;
         }
     }
