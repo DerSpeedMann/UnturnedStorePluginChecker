@@ -123,10 +123,10 @@ using SpeedMann.PluginChecker.Models.UStore;
         }
         
         // is successful if the server ip is allowed to access all workshop files
-        private static void workshopCheckCompleted(bool success, List<WorkshopItem> workshopsData)
+        private static void workshopCheckCompleted(bool success, List<WorkshopItem> workshopItems)
         {
             // the WorkshopItem list contains the results of every single workshop item checked
-            foreach (WorkshopItem item in workshopsData)
+            foreach (WorkshopItem item in workshopItems)
             {
                 if (!item.enabled && item.required)
                 {
