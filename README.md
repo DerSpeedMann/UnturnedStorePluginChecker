@@ -8,6 +8,8 @@ If you have questions, feature request or find any bugs, please contact me on Di
 
 # Setup:
 ```cs
+using SpeedMann.PluginChecker.Models.UStore;
+
  public class Plugin : RocketPlugin<PluginConfiguration>
  {
         public static Plugin Inst;
