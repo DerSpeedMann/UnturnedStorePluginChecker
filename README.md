@@ -122,7 +122,7 @@ using SpeedMann.PluginChecker.Models.UStore;
             workshopChecker.checkWorkshopItems(workshopItems, workshopCheckCompleted);
         }
         
-        // is successful if all required mods are loaded and if the server ip is allowed to access all files
+        // is successful if the server ip is allowed to access all workshop files
         private static void workshopCheckCompleted(bool success, List<WorkshopItem> workshopsData)
         {
             // the WorkshopItem list contains the results of every single workshop item checked
